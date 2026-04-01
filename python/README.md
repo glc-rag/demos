@@ -63,7 +63,7 @@ PASSWORD = "dummy"
 
 ## Usage
 
-From this directory (`INFO/python`), run:
+Run the demo from the command line:
 
 ```bash
 python info_demo.py
