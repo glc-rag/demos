@@ -64,7 +64,7 @@ define('PASSWORD', 'YOUR_PASSWORD');
 
 ## Usage
 
-Run the demo from the command line:
+From this directory (`INFO/php`), run:
 
 ```bash
 php info_demo.php
