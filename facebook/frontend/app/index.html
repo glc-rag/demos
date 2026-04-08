@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Facebook B2B Comments - GLC-RAG</title>
+    <meta name="description" content="Facebook kommentek B2B kezelése GLC-RAG API-val">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrap">
+        <!-- Header -->
+        <header id="app-header">
+            <h1>Facebook B2B Comments</h1>
+            <p class="subtitle">Kommentek kezelése és válasz küldése Facebookra GLC-RAG API-val</p>
+        </header>
+
+        <!-- Status Bar -->
+        <div id="status-bar" class="status-line" aria-live="polite">
+            <span class="status-label">JWT: <span id="auth-status">--</span></span>
+        </div>
+
+        <!-- Global Error Banner -->
+        <div id="global-error" class="error-banner" role="alert" aria-live="polite" hidden></div>
+
+        <!-- Main Content -->
+        <main id="main" class="main-content">
+            <!-- Auth Panel (always visible) -->
+            <section id="panel-auth" class="tab-panel active" role="tabpanel" aria-labelledby="tab-auth">
+                <div class="auth-container">
+                    <div class="auth-tabs">
+                        <button type="button" class="auth-tab-btn active" data-auth-tab="login">Bejelentkezés</button>
+                        <button type="button" class="auth-tab-btn" data-auth-tab="register">Regisztráció</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div id="auth-login" class="auth-form active">
+                        <form id="form-auth-login" autocomplete="on" novalidate>
+                            <div class="form-group">
+                                <label for="login-user-id">User ID <span class="required">*</span></label>
+                                <input type="text" id="login-user-id" name="user_id" placeholder="user_123" autocomplete="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="login-tenant-id">Tenant ID <span class="required">*</span></label>
+                                <input type="text" id="login-tenant-id" name="tenant_id" placeholder="tenant_456" autocomplete="organization">
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Jelszó <span class="required">*</span></label>
+                                <input type="password" id="login-password" name="password" placeholder="Jelszó" autocomplete="current-password">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full" id="btn-login">Bejelentkezés</button>
+                            <button type="button" class="btn btn-secondary btn-full" id="btn-logout" disabled>Kijelentkezés</button>
+                        </form>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="auth-register" class="auth-form">
+                        <form id="form-auth-register" autocomplete="on" novalidate>
+                            <div class="form-group">
+                                <label for="reg-email">Email <span class="required">*</span></label>
+                                <input type="email" id="reg-email" name="email" placeholder="email@example.com" autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-password">Jelszó <span class="required">*</span></label>
+                                <input type="password" id="reg-password" name="password" placeholder="Jelszó" autocomplete="new-password">
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="reg-terms" required>
+                                <label for="reg-terms">Elfogadom az <a href="#" id="legal-link">Adatvédelmi szabályzatot</a></label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full" id="btn-register">Regisztráció</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Panel (hidden until logged in) -->
+            <section id="panel-dashboard" class="tab-panel" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+                <div class="dashboard-header">
+                    <h2>Dashboard</h2>
+                    <div class="dashboard-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-poll-profiles" disabled>Frissítés</button>
+                        <button type="button" class="btn btn-danger" id="btn-logout-dashboard">Kijelentkezés</button>
+                    </div>
+                </div>
+
+                <!-- Facebook Profiles Section -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3>Facebook Profilok</h3>
+                        <button type="button" class="btn btn-primary" id="btn-new-profile">Új profil</button>
+                    </div>
+
+                    <div class="card">
+                        <table class="data" id="profiles-table">
+                            <thead>
+                                <tr>
+                                    <th>Név</th>
+                                    <th>Facebook Page ID</th>
+                                    <th>Státusz</th>
+                                    <th>Műveletek</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="empty-state">Még nincs Facebook profil – adj hozzá újat.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Profile Form Card -->
+                    <div class="card profile-form-card" id="profile-form-card" hidden>
+                        <fieldset>
+                            <legend id="profile-form-legend">Új Facebook profil</legend>
+                            <input type="hidden" id="profile-id">
+                            <div class="form-group">
+                                <label for="profile-fb-page-id">Facebook Page ID <span class="required">*</span></label>
+                                <input type="text" id="profile-fb-page-id" required placeholder="Facebook Page ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-name">Profil Név <span class="required">*</span></label>
+                                <input type="text" id="profile-name" required placeholder="Profil neve">
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="profile-enabled" checked>
+                                <label for="profile-enabled">Aktív</label>
+                            </div>
+                            <div class="form-group" id="reply-mode-group" hidden>
+                                <label for="profile-reply-mode">Válasz mód</label>
+                                <select id="profile-reply-mode">
+                                    <option value="auto">auto (automata)</option>
+                                    <option value="manual">manual (jóváhagyás szükséges)</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button type="button" class="btn btn-primary" id="btn-save-profile">Mentés</button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancel-profile">Mégsem</button>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3>Kommentek</h3>
+                    </div>
+
+                    <div class="card">
+                        <div class="comments-filters">
+                            <div class="form-group" style="flex: 1; min-width: 200px;">
+                                <label for="profile-id-select">Facebook Profil <span class="required">*</span></label>
+                                <select id="profile-id-select"></select>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 200px;">
+                                <label for="comment-status">Státusz</label>
+                                <select id="comment-status">
+                                    <option value="">Összes</option>
+                                    <option value="pending_approval">pending_approval</option>
+                                    <option value="posted">posted</option>
+                                    <option value="failed_manual">failed_manual</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 150px;">
+                                <label for="page-size">Lap méret</label>
+                                <select id="page-size">
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="btn-list-comments">Listázás</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <table class="data" id="comments-table">
+                            <thead>
+                                <tr>
+                                    <th>FB Comment ID</th>
+                                    <th>Poszt</th>
+                                    <th>Üzenet</th>
+                                    <th>Válasz</th>
+                                    <th>Státusz</th>
+                                    <th>Műveletek</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="6" class="empty-state">Kérjük, töltsd le a kommenteket.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Send Reply Form -->
+                    <div class="card send-reply-card" id="send-reply-card" hidden>
+                        <fieldset>
+                            <legend>Válasz küldése</legend>
+                            <input type="hidden" id="send-comment-id">
+                            <div class="form-group">
+                                <label for="send-reply">Válasz szöveg <span class="required">*</span></label>
+                                <textarea id="send-reply" rows="4" placeholder="Írd be a választ..."></textarea>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button type="button" class="btn btn-primary" id="btn-send-reply">Válasz küldése Facebookra</button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancel-send">Mégsem</button>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e4e4e7; display: flex; justify-content: space-between; align-items: center;">
+            <span class="footer-text">Facebook B2B Comments - GLC-RAG</span>
+            <a href="https://glc-rag.hu/docs" target="_blank" rel="noopener" class="footer-link">API dokumentáció (Swagger)</a>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
