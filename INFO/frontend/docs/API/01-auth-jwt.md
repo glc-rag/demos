@@ -2,6 +2,8 @@
 
 Ez a dokumentum bemutatja, hogyan használható a GLC-RAG API JWT (JSON Web Token) alapú hitelesítéssel. A JWT hitelesítés az **internal csatornára** (`channel: "internal"`) kötelező.
 
+**Új fiók:** nyilvános regisztráció és email megerősítés: [04-auth-register.md](./04-auth-register.md) (`POST /auth/register`), majd `POST /auth/login` a JWT megszerzéséhez.
+
 ---
 
 ## Leírás

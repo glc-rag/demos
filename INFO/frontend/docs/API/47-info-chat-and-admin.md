@@ -156,6 +156,7 @@ for it in items:
 
 ## További információ
 
+- **Info kérdőívek (publikus widget):** [49-info-surveys-public-widget.md](./49-info-surveys-public-widget.md) – admin szerkesztő, widget beküldés, API összefoglaló
 - Chat sync: [10-chat-sync.md](10-chat-sync.md)
 - API v1 chat: [12-api-v1-chat.md](12-api-v1-chat.md)
 - RAG dokumentumok admin (hasonló állapotkezelés): [43-rag-documents-admin.md](43-rag-documents-admin.md)

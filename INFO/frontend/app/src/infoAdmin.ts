@@ -2,6 +2,46 @@
 
 import { apiCall } from './api.js';
 
+type CrawlStatus = 'RUNNING' | 'DONE' | 'FAILED' | 'CANCELLED';
+
+interface StartWebCrawlPayload {
+    url?: string;
+    urls?: string[];
+    depth: number;
+    max_pages: number;
+    scope: 'internal' | 'public';
+}
+
+interface WebCrawlJobResponse {
+    job?: {
+        status?: CrawlStatus | string;
+        stats?: Record<string, any>;
+    };
+    status?: CrawlStatus | string;
+    stats?: Record<string, any>;
+    events?: Array<Record<string, any>>;
+}
+
+async function apiCallWithFallback(
+    primaryPath: string,
+    fallbackPath: string,
+    options: {
+        method?: string;
+        body?: unknown;
+        auth?: boolean;
+        headers?: Record<string, string>;
+    }
+): Promise<Response> {
+    try {
+        return await apiCall(primaryPath, options);
+    } catch (err: any) {
+        if (err?.status === 404 || (typeof err?.message === 'string' && err.message.includes('(404)'))) {
+            return apiCall(fallbackPath, options);
+        }
+        throw err;
+    }
+}
+
 async function listInfo(limit: number = 50): Promise<any> {
     const response = await apiCall(`/admin/info?limit=${limit}`, { auth: true });
     return response.json();
@@ -57,4 +97,48 @@ async function pollIndexing(id: string, maxAttempts: number = 20, intervalMs: nu
     return false;
 }
 
-export { listInfo, getInfoById, createInfo, updateInfo, deleteInfo, reindexInfo, pollIndexing };
+async function startInfoWebCrawl(payload: StartWebCrawlPayload): Promise<{ job_id: string; message?: string }> {
+    const response = await apiCallWithFallback('/api/admin/info/from-url/', '/admin/info/from-url/', {
+        method: 'POST',
+        auth: true,
+        body: payload,
+    });
+    return response.json();
+}
+
+async function getInfoWebCrawlJob(jobId: string): Promise<WebCrawlJobResponse> {
+    const response = await apiCallWithFallback(
+        `/api/admin/info/from-url/${jobId}/`,
+        `/admin/info/from-url/${jobId}/`,
+        {
+        method: 'GET',
+        auth: true,
+        }
+    );
+    return response.json();
+}
+
+async function cancelInfoWebCrawl(jobId: string): Promise<{ cancelled?: boolean; message?: string }> {
+    const response = await apiCallWithFallback(
+        `/api/admin/web-crawl/${jobId}/cancel`,
+        `/admin/web-crawl/${jobId}/cancel`,
+        {
+        method: 'POST',
+        auth: true,
+        }
+    );
+    return response.json();
+}
+
+export {
+    listInfo,
+    getInfoById,
+    createInfo,
+    updateInfo,
+    deleteInfo,
+    reindexInfo,
+    pollIndexing,
+    startInfoWebCrawl,
+    getInfoWebCrawlJob,
+    cancelInfoWebCrawl,
+};

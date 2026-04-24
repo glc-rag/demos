@@ -1,34 +1,38 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GLC-RAG INFO Demo SPA</title>
     <meta name="description" content="Önálló frontend alkalmazás a GLC-RAG API demonstrálásához: tenant admin és chat funkciók.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-    <!-- AUTH VIEW: Csak bejelentkezés előtt látható -->
-    <div id="auth-view" class="min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-md w-full">
-            <header class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-primary">GLC-RAG <span class="text-gray-600">INFO Demo</span></h1>
-                <p class="text-gray-500 mt-2">Kérjük, jelentkezzen be a hozzáféréshez.</p>
-            </header>
+<body>
+    <div id="auth-view" class="auth-shell">
+        <div class="auth-card">
+            <aside class="auth-brand">
+                <p class="badge">GLC-RAG</p>
+                <h1>INFO Demo</h1>
+                <p>Központi felület tenant adminisztrációhoz, tudásbázis kezeléshez és chat teszteléshez.</p>
+                <ul>
+                    <li>Gyors tenant alapú belépés</li>
+                    <li>Átlátható Info Admin panel</li>
+                    <li>Belső és publikus chat teszt</li>
+                </ul>
+            </aside>
 
-            <div class="card p-8">
-                <!-- Login form -->
+            <section class="auth-forms">
                 <div id="login-container">
-                    <h2 class="text-xl font-bold mb-6">Bejelentkezés</h2>
-                    <form id="login-form" class="space-y-4">
+                    <h2>Bejelentkezés</h2>
+                    <p class="muted">Add meg a tenant és user adataidat a folytatáshoz.</p>
+                    <form id="login-form">
                         <div class="form-group">
                             <label for="login-tenant-id">Tenant ID</label>
-                            <input type="text" id="login-tenant-id" required placeholder="Pl. tenant_123">
+                            <input type="text" id="login-tenant-id" required placeholder="pl. tenant_123">
                         </div>
                         <div class="form-group">
                             <label for="login-user-id">User ID</label>
-                            <input type="text" id="login-user-id" required placeholder="Pl. admin_user">
+                            <input type="text" id="login-user-id" required placeholder="pl. admin_user">
                         </div>
                         <div class="form-group">
                             <label for="login-password">Jelszó</label>
@@ -36,29 +40,27 @@
                         </div>
                         <button type="submit" class="btn-primary w-full">Bejelentkezés</button>
                     </form>
-                    <p class="mt-6 text-center text-sm text-gray-500">
-                        Nincs még fiókja? <button type="button" id="show-register" class="text-primary font-semibold hover:underline">Regisztráció</button>
-                    </p>
+                    <p class="switch-copy">Nincs még fiókod? <button type="button" id="show-register" class="link-btn">Regisztráció</button></p>
                 </div>
 
-                <!-- Register form (rejtett alapból) -->
                 <div id="register-container" style="display: none;">
-                    <h2 class="text-xl font-bold mb-6">Regisztráció</h2>
-                    <form id="register-form" class="space-y-4">
+                    <h2>Regisztráció</h2>
+                    <p class="muted">Hozz létre új tenant-admin fiókot.</p>
+                    <form id="register-form">
                         <div class="form-group">
                             <label for="register-username">Felhasználónév (User ID)</label>
-                            <input type="text" id="register-username" required placeholder="Pl. admin_janos">
+                            <input type="text" id="register-username" required placeholder="pl. admin_janos">
                         </div>
                         <div class="form-group">
                             <label for="register-tenant-id">Új Tenant ID</label>
-                            <input type="text" id="register-tenant-id" required placeholder="Pl. acme-corp">
-                            <p class="text-[10px] text-gray-400 mt-1">3–50 karakter, csak a-z, 0-9, _, -</p>
+                            <input type="text" id="register-tenant-id" required placeholder="pl. acme-corp">
+                            <p class="field-hint">3-50 karakter, csak a-z, 0-9, _, -</p>
                         </div>
                         <div class="form-group">
                             <label for="register-email">Email cím</label>
                             <input type="email" id="register-email" required placeholder="email@example.com">
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="form-grid-two">
                             <div class="form-group">
                                 <label for="register-password">Jelszó</label>
                                 <input type="password" id="register-password" required minlength="8" placeholder="••••••••">
@@ -68,107 +70,129 @@
                                 <input type="password" id="register-password-confirm" required minlength="8" placeholder="••••••••">
                             </div>
                         </div>
-                        <div class="form-group checkbox-group mt-4">
+                        <label class="checkbox-row" for="register-terms">
                             <input type="checkbox" id="register-terms" required>
-                            <label for="register-terms" class="text-sm">Elfogadom az <a href="#" class="text-primary font-semibold hover:underline">adatvédelmi szabályzatot és ÁSZF-et</a></label>
-                        </div>
+                            <span>Elfogadom az <a href="#">adatvédelmi szabályzatot és ÁSZF-et</a>.</span>
+                        </label>
                         <button type="submit" class="btn-primary w-full">Fiók létrehozása</button>
                     </form>
-                    <p class="mt-6 text-center text-sm text-gray-500">
-                        Már van fiókja? <button type="button" id="show-login" class="text-primary font-semibold hover:underline">Vissza a belépéshez</button>
-                    </p>
+                    <p class="switch-copy">Már van fiókod? <button type="button" id="show-login" class="link-btn">Vissza a belépéshez</button></p>
                 </div>
-            </div>
-            
-            <div id="auth-error" class="mt-4 hidden" role="alert"></div>
+
+                <div id="auth-error" class="hidden alert alert-danger" role="alert"></div>
+            </section>
         </div>
     </div>
 
-    <!-- APP VIEW: Bejelentkezés után látható -->
-    <div id="app-view" class="hidden min-h-screen flex flex-col">
-        <!-- Header / Nav -->
-        <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <h1 class="text-xl font-bold text-primary">GLC-RAG <span class="text-gray-400 font-normal">Demo</span></h1>
-                    <div id="status-bar" class="hidden sm:flex items-center gap-3 text-xs text-gray-500 border-l border-gray-200 pl-4 ml-2">
-                        <span>API: <code id="api-base-url-value" class="bg-gray-100 px-1 rounded"></code></span>
-                        <span id="widget-config-debug" class="cursor-help underline" title="Widget konfiguráció JSON">Config</span>
-                        <span id="jwt-status" class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500"></span> Aktív</span>
-                    </div>
+    <div id="app-view" class="hidden app-shell">
+        <header class="topbar">
+            <div class="brand-block">
+                <h1>GLC-RAG <span>INFO Demo</span></h1>
+                <div id="status-bar" class="status-bar">
+                    <span>API: <code id="api-base-url-value"></code></span>
+                    <button id="widget-config-debug" type="button" class="link-btn compact">Config</button>
+                    <span id="jwt-status" class="jwt-pill"><span class="dot"></span>Aktív</span>
                 </div>
-                
-                <div class="flex items-center gap-4">
-                    <div id="user-display" class="hidden md:block text-right">
-                        <p class="text-sm font-semibold" id="display-user-id"></p>
-                        <p class="text-xs text-gray-500" id="display-tenant-id"></p>
-                    </div>
-                    <button type="button" id="logout-btn" class="btn-secondary text-sm px-3 py-1.5 h-auto">Kijelentkezés</button>
+            </div>
+            <div class="user-block">
+                <div id="user-display" class="user-display">
+                    <p id="display-user-id"></p>
+                    <p id="display-tenant-id"></p>
                 </div>
+                <button type="button" id="logout-btn" class="btn-secondary">Kijelentkezés</button>
             </div>
         </header>
 
-        <div class="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8">
-            <!-- Sidebar / Tab list -->
-            <aside class="w-full md:w-64 flex-shrink-0">
-                <nav id="tab-bar" class="flex flex-col gap-1">
-                    <button type="button" data-tab="dashboard" class="tab-btn active">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        Irányítópult
-                    </button>
-                    <button type="button" data-tab="info" class="tab-btn">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        Info Admin
-                    </button>
-                    <button type="button" data-tab="chat-int" class="tab-btn">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.827-1.213L3 20l1.391-3.952A8.018 8.018 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                        Belső Chat
-                    </button>
-                    <button type="button" data-tab="chat-widget" class="tab-btn">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                        Widget Admin
-                    </button>
+        <div class="layout">
+            <aside class="sidebar">
+                <nav id="tab-bar" class="tab-list">
+                    <button type="button" data-tab="dashboard" class="tab-btn active">Irányítópult</button>
+                    <button type="button" data-tab="info" class="tab-btn">Info Admin</button>
+                    <button type="button" data-tab="surveys" class="tab-btn">Kérdőívek</button>
+                    <button type="button" data-tab="chat-int" class="tab-btn">Belső Chat</button>
+                    <button type="button" data-tab="chat-widget" class="tab-btn">Widget Admin</button>
                 </nav>
             </aside>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 min-w-0">
-                <div id="global-error" class="hidden mb-6" role="alert" aria-live="polite"></div>
+            <main class="content">
+                <div id="global-error" class="hidden alert alert-danger" role="alert" aria-live="polite"></div>
 
-                <!-- Dashboard Panel -->
-                <div id="panel-dashboard" class="tab-panel active">
-                    <header class="mb-8">
-                        <h2 class="text-2xl font-bold">Üdvözöljük a GLC-RAG demóban!</h2>
-                        <p class="text-gray-500">Ez a felület lehetővé teszi a tenant adminisztrációs és RAG chat funkciók kipróbálását.</p>
+                <section id="panel-dashboard" class="tab-panel">
+                    <header class="panel-head">
+                        <h2>Üdv a GLC-RAG demóban</h2>
+                        <p class="muted">Válassz modult bal oldalt, és kezeld a tudásbázist vagy teszteld a chat működését.</p>
                     </header>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="card p-6">
-                            <h3 class="font-bold text-lg mb-2">Tudásbázis kezelés</h3>
-                            <p class="text-sm text-gray-500 mb-4">Töltsön fel szöveges tartalmakat, amiket az AI válaszadáskor forrásként használhat.</p>
-                            <button type="button" onclick="document.querySelector('[data-tab=info]').click()" class="text-primary text-sm font-semibold hover:underline">Ugrás az Info Adminhoz →</button>
-                        </div>
-                        <div class="card p-6">
-                            <h3 class="font-bold text-lg mb-2">AI Chat tesztelés</h3>
-                            <p class="text-sm text-gray-500 mb-4">Tesztelje a válaszadást a feltöltött dokumentumok alapján a /info parancs használatával.</p>
-                            <button type="button" onclick="document.querySelector('[data-tab=chat-int]').click()" class="text-primary text-sm font-semibold hover:underline">Próbálja ki a Chatet →</button>
-                        </div>
+                    <div class="card-grid">
+                        <article class="card">
+                            <h3>Tudásbázis kezelés</h3>
+                            <p>Hozz létre, módosíts és indexelj Info elemeket gyorsan és áttekinthetően.</p>
+                            <button type="button" class="link-btn" onclick="document.querySelector('[data-tab=info]').click()">Ugrás az Info Adminhoz</button>
+                        </article>
+                        <article class="card">
+                            <h3>AI chat tesztelés</h3>
+                            <p>Teszteld az AI válaszokat a belső dokumentumok alapján egyetlen felületen.</p>
+                            <button type="button" class="link-btn" onclick="document.querySelector('[data-tab=chat-int]').click()">Ugrás a Belső Chathoz</button>
+                        </article>
                     </div>
-                </div>
+                </section>
 
-                <!-- Info Admin Panel -->
-                <div id="panel-info" class="tab-panel">
-                    <div class="flex items-center justify-between mb-6">
+                <section id="panel-info" class="tab-panel hidden">
+                    <header class="panel-head row">
                         <div>
-                            <h2 class="text-2xl font-bold">Info elemek</h2>
-                            <p class="text-sm text-gray-500">A RAG tudásbázis elemeinek kezelése.</p>
+                            <h2>Info elemek</h2>
+                            <p class="muted">A RAG tudásbázis elemeinek kezelése.</p>
                         </div>
-                        <button type="button" id="info-new-btn" class="btn-primary">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Új elem
-                        </button>
-                    </div>
-                    
-                    <div class="table-wrapper mb-8">
+                        <button type="button" id="info-new-btn" class="btn-primary">Új elem</button>
+                    </header>
+
+                    <section class="card crawl-card">
+                        <div class="crawl-head">
+                            <div>
+                                <h3>Weboldal betöltése URL-ről</h3>
+                                <p class="muted">A crawler oldalanként automatikusan létrehoz Info elemet és elindítja az indexelést.</p>
+                            </div>
+                            <div class="crawl-actions">
+                                <button type="button" id="info-crawl-start" class="btn-primary">Web crawl indítása</button>
+                                <button type="button" id="info-crawl-cancel" class="btn-secondary hidden">Megszakítás</button>
+                            </div>
+                        </div>
+
+                        <div class="crawl-grid">
+                            <div class="form-group">
+                                <label for="info-crawl-urls">URL vagy URL lista</label>
+                                <textarea id="info-crawl-urls" rows="3" placeholder="https://example.com&#10;https://example.com/docs"></textarea>
+                                <p class="field-hint">Több URL megadható új sorral, vesszővel vagy szóközzel.</p>
+                            </div>
+                            <div class="crawl-settings">
+                                <div class="form-group">
+                                    <label for="info-crawl-depth">Mélység (depth)</label>
+                                    <input type="number" id="info-crawl-depth" min="1" max="10" value="2">
+                                </div>
+                                <div class="form-group">
+                                    <label for="info-crawl-max-pages">Max oldalszám (max_pages)</label>
+                                    <input type="number" id="info-crawl-max-pages" min="1" max="2000" value="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="info-crawl-scope">Scope</label>
+                                    <select id="info-crawl-scope">
+                                        <option value="public">Publikus (Public)</option>
+                                        <option value="internal">Belső (Internal)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="crawl-status">
+                            <p id="info-crawl-status-text" class="muted">Még nem indult web crawl.</p>
+                            <p class="muted small">Job ID: <code id="info-crawl-job-id">-</code></p>
+                        </div>
+
+                        <div id="info-crawl-events" class="crawl-events">
+                            <p class="muted small">Események itt jelennek meg futás közben.</p>
+                        </div>
+                    </section>
+
+                    <div class="table-wrapper">
                         <table class="data">
                             <thead>
                                 <tr>
@@ -178,141 +202,289 @@
                                     <th class="text-right">Műveletek</th>
                                 </tr>
                             </thead>
-                            <tbody id="info-list-body">
-                                <!-- Betöltés JS-sel -->
-                            </tbody>
+                            <tbody id="info-list-body"></tbody>
                         </table>
                     </div>
 
-                    <div id="info-form-section" class="card p-6 hidden">
+                    <section id="info-form-section" class="card hidden">
                         <fieldset id="info-form">
-                            <legend id="info-form-legend" class="text-xl font-bold mb-6">Új elem létrehozása</legend>
+                            <legend id="info-form-legend">Új elem létrehozása</legend>
                             <input type="hidden" id="info-id">
-                            <div class="grid grid-cols-1 gap-4">
+                            <div class="form-group">
+                                <label for="info-title">Cím</label>
+                                <input type="text" id="info-title" required placeholder="Elem címe">
+                            </div>
+                            <div class="form-group">
+                                <label for="info-description">Rövid leírás</label>
+                                <input type="text" id="info-description" placeholder="Miről szól ez az elem?">
+                            </div>
+                            <div class="form-group">
+                                <label for="info-content">Tartalom</label>
+                                <textarea id="info-content" required placeholder="Ide írd a tudásbázis tartalmát..."></textarea>
+                            </div>
+                            <div class="form-grid-two">
                                 <div class="form-group">
-                                    <label for="info-title">Cím</label>
-                                    <input type="text" id="info-title" required placeholder="Elem címe">
+                                    <label for="info-scope">Láthatóság</label>
+                                    <select id="info-scope">
+                                        <option value="internal">Belső (Internal)</option>
+                                        <option value="public">Publikus (Public)</option>
+                                    </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="info-description">Rövid leírás</label>
-                                    <input type="text" id="info-description" placeholder="Miről szól ez az elem?">
-                                </div>
-                                <div class="form-group">
-                                    <label for="info-content">Tartalom</label>
-                                    <textarea id="info-content" required style="min-height: 200px;" placeholder="Ide írja a tudásbázis tartalmát..."></textarea>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="form-group">
-                                        <label for="info-scope">Láthatóság (Scope)</label>
-                                        <select id="info-scope">
-                                            <option value="internal">Belső (Internal)</option>
-                                            <option value="public">Publikus (Public)</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group flex items-end">
-                                        <label class="flex items-center gap-2 cursor-pointer pb-3">
-                                            <input type="checkbox" id="info-is-active" checked class="w-4 h-4">
-                                            <span>Aktív állapot</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="flex justify-between items-center mt-6 pt-6 border-top border-gray-100">
-                                    <div id="info-status-text" class="text-sm text-gray-500 italic"></div>
-                                    <div class="flex gap-3">
-                                        <button type="button" id="info-cancel" class="btn-secondary px-6">Mégse</button>
-                                        <button type="button" id="info-save" class="btn-primary px-8">Mentés</button>
-                                        <button type="button" id="info-update-btn" class="btn-primary px-8 hidden">Frissítés</button>
-                                    </div>
+                                <label class="checkbox-row end" for="info-is-active">
+                                    <input type="checkbox" id="info-is-active" checked>
+                                    <span>Aktív állapot</span>
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <p id="info-status-text" class="muted"></p>
+                                <div>
+                                    <button type="button" id="info-cancel" class="btn-secondary">Mégse</button>
+                                    <button type="button" id="info-save" class="btn-primary">Mentés</button>
+                                    <button type="button" id="info-update-btn" class="btn-primary hidden">Frissítés</button>
                                 </div>
                             </div>
                         </fieldset>
-                    </div>
-                </div>
+                    </section>
+                </section>
 
-                <!-- Chat Internal Panel -->
-                <div id="panel-chat-int" class="tab-panel h-full flex flex-col">
-                    <header class="mb-6">
-                        <h2 class="text-2xl font-bold">Belső Chat</h2>
-                        <p class="text-sm text-gray-500">AI válaszok a feltöltött info elemek alapján.</p>
+                <section id="panel-surveys" class="tab-panel hidden">
+                    <header class="panel-head row">
+                        <div>
+                            <h2>Info kérdőívek</h2>
+                            <p class="muted">Folyamat: Beállítás -> Csoport -> Kérdőív -> Mezők -> Beküldések.</p>
+                        </div>
                     </header>
-                    
-                    <div class="flex-1 flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm" style="min-height: 500px;">
-                        <!-- Message area -->
-                        <div id="chat-int-response-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-                            <div class="flex justify-center my-8">
-                                <p class="text-sm text-gray-400 bg-white px-4 py-1 rounded-full border border-gray-100 shadow-sm">
-                                    A válaszok a feltöltött dokumentumokból generálódnak.
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <!-- Input area -->
-                        <div class="p-4 border-t border-gray-100 bg-white">
-                            <div class="relative flex items-end gap-2">
-                                <textarea id="chat-int-text" rows="2" class="flex-1 resize-none border-gray-200 focus:ring-primary focus:border-primary rounded-lg py-3 pl-4 pr-12" placeholder="Kérdezzen az info elemekről (pl. mi az ÁSZF?)..."></textarea>
-                                <button type="button" id="chat-int-submit" class="bg-primary text-white p-2.5 rounded-lg hover:bg-primary-hover transition-colors shadow-sm">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Chat Widget Panel -->
-                <div id="panel-chat-widget" class="tab-panel">
-                    <header class="mb-6">
-                        <div class="flex justify-between items-center">
+                    <section class="card">
+                        <h3>Beállítások</h3>
+                        <div class="form-grid-two">
+                            <label class="checkbox-row" for="survey-enabled">
+                                <input type="checkbox" id="survey-enabled">
+                                <span>Kérdőívek engedélyezése a publikus Info chatben</span>
+                            </label>
+                            <div class="form-group">
+                                <label for="survey-notification-email">Értesítő email felülírás (opcionális)</label>
+                                <input type="email" id="survey-notification-email" placeholder="pl. admin@ceg.hu">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <p id="survey-settings-status" class="muted">Még nincs betöltve.</p>
                             <div>
-                                <h2 class="text-2xl font-bold">Widget Adminisztráció</h2>
-                                <p class="text-sm text-gray-500">A publikus widget konfigurálása és tesztelése.</p>
+                                <button type="button" id="survey-settings-load" class="btn-secondary">Frissítés</button>
+                                <button type="button" id="survey-settings-save" class="btn-primary">Beállítások mentése</button>
                             </div>
-                            <button type="button" id="create-token-btn" class="btn-primary">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                Új Widget Token
-                            </button>
                         </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="survey-tabs">
+                            <button type="button" id="survey-tab-editor" class="tab-btn active">Szerkesztő</button>
+                            <button type="button" id="survey-tab-responses" class="tab-btn">Beküldések</button>
+                        </div>
+
+                        <div id="survey-editor-view">
+                            <details class="survey-help">
+                                <summary>Segítség - LLM leírás (csak szerver)</summary>
+                                <p class="muted small">A csoport LLM leírása szabályokat ad a modellnek arról, mikor ajánlja fel a kérdőívet.</p>
+                            </details>
+
+                            <div class="survey-toolbar">
+                                <button type="button" id="survey-group-open-btn" class="btn-secondary">+ Új csoport</button>
+                            </div>
+
+                            <div id="survey-group-create-panel" class="hidden survey-inline-panel">
+                                <h4 id="survey-group-panel-title">Új csoport</h4>
+                                <div class="form-grid-two">
+                                    <div class="form-group">
+                                        <label for="survey-group-title">Csoport cím</label>
+                                        <input type="text" id="survey-group-title" placeholder="pl. Kapcsolatfelvétel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="survey-group-sort-order">Sorrend</label>
+                                        <input type="number" id="survey-group-sort-order" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="survey-group-user-description">Felhasználói leírás</label>
+                                    <textarea id="survey-group-user-description" rows="2" placeholder="Rövid leírás a widgetben..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="survey-group-llm-description">LLM leírás (csak szerver)</label>
+                                    <textarea id="survey-group-llm-description" rows="2" placeholder="Mikor ajánlja fel ezt az űrlapot az LLM..."></textarea>
+                                </div>
+                                <label class="checkbox-row" for="survey-group-active">
+                                    <input type="checkbox" id="survey-group-active" checked>
+                                    <span>Aktív csoport</span>
+                                </label>
+                                <div class="form-actions">
+                                    <p id="survey-builder-status" class="muted">Szerkesztő állapot: készen áll.</p>
+                                    <div>
+                                        <button type="button" id="survey-group-cancel-btn" class="btn-secondary">Mégse</button>
+                                        <button type="button" id="survey-group-create-btn" class="btn-primary">Mentés</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="survey-questionnaire-modal" class="modal hidden">
+                                <div class="modal-card survey-modal-card">
+                                    <h4 id="survey-questionnaire-modal-title">Kérdőív létrehozása</h4>
+                                    <p class="muted small" id="survey-questionnaire-modal-context"></p>
+                                    <div class="form-grid-two">
+                                        <div class="form-group">
+                                            <label for="survey-questionnaire-title">Kérdőív cím</label>
+                                            <input type="text" id="survey-questionnaire-title" placeholder="pl. Kapcsolatfelvételi kérdőív">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="survey-questionnaire-sort-order">Sorrend</label>
+                                            <input type="number" id="survey-questionnaire-sort-order" value="0">
+                                        </div>
+                                    </div>
+                                    <label class="checkbox-row" for="survey-questionnaire-active">
+                                        <input type="checkbox" id="survey-questionnaire-active" checked>
+                                        <span>Aktív kérdőív</span>
+                                    </label>
+                                    <div class="form-actions">
+                                        <p class="muted small">Egy csoportban csak egy kérdőív lehet aktív szerkezettel.</p>
+                                        <div>
+                                            <button type="button" id="survey-questionnaire-cancel-btn" class="btn-secondary">Mégse</button>
+                                            <button type="button" id="survey-questionnaire-save-btn" class="btn-primary">Mentés</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="survey-field-modal" class="modal hidden">
+                                <div class="modal-card survey-modal-card">
+                                    <h4 id="survey-field-modal-title">Mező hozzáadása</h4>
+                                    <p class="muted small" id="survey-field-modal-context"></p>
+                                    <div class="form-grid-two">
+                                        <div class="form-group">
+                                            <label for="survey-field-type">Mező típus</label>
+                                            <select id="survey-field-type">
+                                                <option value="text">Text</option>
+                                                <option value="email">Email</option>
+                                                <option value="boolean">Boolean</option>
+                                                <option value="checkbox">Checkbox</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="survey-field-sort-order">Sorrend</label>
+                                            <input type="number" id="survey-field-sort-order" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="survey-field-label">Mező címke</label>
+                                        <input type="text" id="survey-field-label" placeholder="pl. E-mail cím">
+                                    </div>
+                                    <div class="form-group hidden" id="survey-field-options-wrap">
+                                        <label for="survey-field-options">Checkbox opciók (vesszővel)</label>
+                                        <input type="text" id="survey-field-options" placeholder="pl. Hírlevél, ÁSZF elfogadás">
+                                        <p class="muted small">Checkbox típusnál legalább egy opció kötelező.</p>
+                                    </div>
+                                    <label class="checkbox-row" for="survey-field-required">
+                                        <input type="checkbox" id="survey-field-required">
+                                        <span>Kötelező mező</span>
+                                    </label>
+                                    <div class="form-actions">
+                                        <p class="muted small">A mezőt mentés után a táblázatban látod vissza.</p>
+                                        <div>
+                                            <button type="button" id="survey-field-cancel-btn" class="btn-secondary">Mégse</button>
+                                            <button type="button" id="survey-field-save-btn" class="btn-primary">Mentés</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="survey-groups-container" class="survey-groups-container">
+                                <p class="muted small">Csoportok betöltése...</p>
+                            </div>
+                        </div>
+
+                        <div id="survey-responses-view" class="hidden">
+                            <div class="panel-subhead">
+                                <h3>Beküldések</h3>
+                                <button type="button" id="survey-responses-refresh" class="btn-secondary">Lista frissítése</button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="data">
+                                    <thead>
+                                        <tr>
+                                            <th>Időpont</th>
+                                            <th>Kérdőív</th>
+                                            <th>Session</th>
+                                            <th>Email státusz</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="survey-responses-body">
+                                        <tr><td colspan="4" class="text-center py-8 text-gray-500">Betöltéshez nyomj frissítést.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                </section>
+
+                <section id="panel-chat-int" class="tab-panel hidden">
+                    <header class="panel-head">
+                        <h2>Belső Chat</h2>
+                        <p class="muted">AI válaszok a feltöltött Info elemek alapján.</p>
+                    </header>
+                    <div class="chat-layout">
+                        <div id="chat-int-response-area" class="chat-stream">
+                            <p class="chat-placeholder">A válaszok a feltöltött dokumentumokból generálódnak.</p>
+                        </div>
+                        <div class="chat-input-row">
+                            <textarea id="chat-int-text" rows="2" placeholder="Kérdezz az info elemekről..."></textarea>
+                            <button type="button" id="chat-int-submit" class="btn-primary">Küldés</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="panel-chat-widget" class="tab-panel hidden">
+                    <header class="panel-head row">
+                        <div>
+                            <h2>Widget Adminisztráció</h2>
+                            <p class="muted">Publikus widget konfigurálása és tesztelése.</p>
+                        </div>
+                        <button type="button" id="create-token-btn" class="btn-primary">Új Widget Token</button>
                     </header>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Left: Config & Embed -->
-                        <div class="lg:col-span-1 space-y-6">
-                            <div class="card p-6">
-                                <h3 class="font-bold mb-4">Aktív Tokenek</h3>
-                                <div id="token-list-container" class="space-y-3">
-                                    <!-- Tokenek JS-sel -->
+                    <div class="widget-grid">
+                        <div class="column">
+                            <section class="card">
+                                <h3>Aktív tokenek</h3>
+                                <div id="token-list-container">
                                     <p class="text-xs text-gray-400 italic">Betöltés...</p>
                                 </div>
-                            </div>
+                            </section>
 
-                            <div class="card p-6">
-                                <h3 class="font-bold mb-4">Beágyazási kód</h3>
-                                <p class="text-xs text-gray-500 mb-3">Válasszon egy tokent a listából a kód generálásához:</p>
+                            <section class="card code-card">
+                                <h3>Beágyazási kód</h3>
+                                <p class="muted small">Válassz tokent a kód generálásához.</p>
                                 <div class="code-container">
                                     <span class="code-badge">HTML / JS</span>
-                                    <pre id="widget-embed-code" class="overflow-x-auto whitespace-pre">Válasszon tokent...</pre>
-                                    <button type="button" id="copy-embed-code" class="absolute top-3 right-3 p-2 bg-gray-800 text-gray-400 hover:text-white rounded-md border border-gray-700 transition-colors hidden" title="Kód másolása">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                    </button>
+                                    <pre id="widget-embed-code">Válasszon tokent...</pre>
+                                    <button type="button" id="copy-embed-code" class="copy-btn hidden" title="Kód másolása">Másolás</button>
                                 </div>
-                            </div>
+                            </section>
                         </div>
 
-                        <!-- Right: Live Test & Config -->
-                        <div class="lg:col-span-2 space-y-6">
-                            <div class="card p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold">Élő Teszt & Beállítások</h3>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs text-gray-500">Session:</span>
-                                        <code id="widget-session-display" class="text-[10px] bg-gray-100 px-1 rounded"></code>
-                                        <button type="button" id="widget-new-session" class="text-primary text-xs font-semibold hover:underline">Új</button>
+                        <div class="column wide">
+                            <section class="card">
+                                <div class="panel-subhead">
+                                    <h3>Élő teszt és beállítások</h3>
+                                    <div class="session-chip">
+                                        <span>Session:</span>
+                                        <code id="widget-session-display"></code>
+                                        <button type="button" id="widget-new-session" class="link-btn compact">Új</button>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="form-grid-two">
                                     <div class="form-group">
-                                        <label for="widget-token">Használt Token ID (token_id)</label>
-                                        <input type="text" id="widget-token" placeholder="Válasszon vagy írjon be egyet">
+                                        <label for="widget-token">Használt Token ID</label>
+                                        <input type="text" id="widget-token" placeholder="Válassz vagy írj be egy tokent">
                                     </div>
                                     <div class="form-group">
                                         <label for="widget-mode">Működési mód</label>
@@ -323,117 +495,92 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col bg-gray-50 rounded-xl border border-gray-200 overflow-hidden shadow-inner" style="height: 300px;">
-                                    <div id="widget-response-area" class="flex-1 overflow-y-auto p-4 space-y-4">
-                                        <p class="text-center text-gray-400 text-sm italic mt-8">Adja meg a tokent a teszteléshez.</p>
+                                <div class="chat-layout compact">
+                                    <div id="widget-response-area" class="chat-stream">
+                                        <p class="chat-placeholder">Add meg a tokent a teszteléshez.</p>
                                     </div>
-                                    <div class="p-4 border-t border-gray-100 bg-white">
-                                        <div class="relative flex items-end gap-2">
-                                            <textarea id="widget-text" rows="1" class="flex-1 resize-none border-gray-200 rounded-lg py-2 pl-4 pr-10" placeholder="Kérdezzen a widgeten keresztül..."></textarea>
-                                            <button type="button" id="widget-submit" class="bg-primary text-white p-2 rounded-lg hover:bg-primary-hover shadow-sm">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                                            </button>
-                                        </div>
+                                    <div class="chat-input-row">
+                                        <textarea id="widget-text" rows="1" placeholder="Kérdezz a widgeten keresztül..."></textarea>
+                                        <button type="button" id="widget-submit" class="btn-primary">Küldés</button>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Create Token Modal -->
-                <div id="create-token-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-                    <div class="bg-white rounded-xl max-w-2xl w-full p-8 shadow-2xl m-4 overflow-y-auto max-h-[90vh]">
-                        <h3 class="text-2xl font-bold mb-6">Új Widget Token létrehozása</h3>
-                        
-                        <form id="create-token-form" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- General -->
-                                <div class="space-y-4">
-                                    <h4 class="font-bold text-sm text-gray-400 uppercase tracking-wider">Alapbeállítások</h4>
+                <div id="create-token-modal" class="modal hidden">
+                    <div class="modal-card large">
+                        <h3>Új Widget Token létrehozása</h3>
+                        <form id="create-token-form">
+                            <div class="form-grid-two">
+                                <div>
+                                    <h4 class="muted small">Alapbeállítások</h4>
                                     <div class="form-group">
-                                        <label for="ct-origins">Engedélyezett Originök (vesszővel elválasztva)</label>
-                                        <input type="text" id="ct-origins" placeholder="pl. https://example.com, https://app.me">
-                                        <p class="text-[10px] text-gray-400 mt-1">Üresen hagyva minden originről engedélyezett.</p>
+                                        <label for="ct-origins">Engedélyezett originek</label>
+                                        <input type="text" id="ct-origins" placeholder="https://example.com, https://app.me">
                                     </div>
                                     <div class="form-group">
-                                        <label for="ct-policy">Rate Limit Policy ID (opcionális)</label>
+                                        <label for="ct-policy">Rate limit policy ID</label>
                                         <input type="text" id="ct-policy" placeholder="Policy azonosító">
                                     </div>
                                 </div>
-
-                                <!-- Limits -->
-                                <div class="space-y-4">
-                                    <h4 class="font-bold text-sm text-gray-400 uppercase tracking-wider">Kérés Limitek (szám)</h4>
+                                <div>
+                                    <h4 class="muted small">Kérés limitek</h4>
                                     <div class="form-group">
-                                        <label for="ct-rpm">Requests Per Minute (RPM)</label>
+                                        <label for="ct-rpm">Requests per minute</label>
                                         <input type="number" id="ct-rpm" min="0" placeholder="Alapértelmezett">
                                     </div>
                                     <div class="form-group">
-                                        <label for="ct-rph">Requests Per Hour (RPH)</label>
+                                        <label for="ct-rph">Requests per hour</label>
                                         <input type="number" id="ct-rph" min="0" placeholder="Alapértelmezett">
                                     </div>
                                     <div class="form-group">
-                                        <label for="ct-qph">Quota Per Hour</label>
+                                        <label for="ct-qph">Quota per hour</label>
                                         <input type="number" id="ct-qph" min="0" placeholder="Alapértelmezett">
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="flex justify-end gap-4 pt-6 border-t border-gray-100">
-                                <button type="button" id="cancel-create-token" class="btn-secondary px-6">Mégse</button>
-                                <button type="submit" class="btn-primary px-10">Token Létrehozása</button>
+                            <div class="modal-actions">
+                                <button type="button" id="cancel-create-token" class="btn-secondary">Mégse</button>
+                                <button type="submit" class="btn-primary">Token létrehozása</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- Token Secret Modal -->
-                <div id="token-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-                    <div class="bg-white rounded-xl max-w-lg w-full p-8 shadow-2xl m-4">
-                        <div class="text-center mb-6">
-                            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-bold">Token sikeresen létrehozva!</h3>
-                            <p class="text-sm text-gray-500 mt-2">Kérjük, mentse el a titkos tokent most. Később nem lesz látható!</p>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-xs font-bold text-gray-400 uppercase">Nyilvános Token ID</label>
-                                <div class="flex gap-2 mt-1">
-                                    <input type="text" id="modal-token-id" readonly class="bg-gray-50 font-mono text-sm">
-                                    <button type="button" data-copy="modal-token-id" class="btn-secondary px-3 py-1 h-auto text-xs">Másolás</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-400 uppercase">Titkos Widget Token (public_widget_token)</label>
-                                <div class="flex gap-2 mt-1">
-                                    <input type="text" id="modal-token-secret" readonly class="bg-gray-50 font-mono text-sm text-primary font-bold">
-                                    <button type="button" data-copy="modal-token-secret" class="btn-secondary px-3 py-1 h-auto text-xs font-bold">Másolás</button>
-                                </div>
-                            </div>
-                            <div id="modal-token-meta" class="p-3 bg-gray-50 rounded-lg text-xs text-gray-500 space-y-1">
-                                <!-- Meta adatok JS-sel -->
+                <div id="token-modal" class="modal hidden">
+                    <div class="modal-card">
+                        <h3>Token sikeresen létrehozva</h3>
+                        <p class="muted">A titkos tokent most mentsd el, később nem lesz látható.</p>
+                        <div class="form-group">
+                            <label for="modal-token-id">Nyilvános Token ID</label>
+                            <div class="inline-input">
+                                <input type="text" id="modal-token-id" readonly>
+                                <button type="button" data-copy="modal-token-id" class="btn-secondary">Másolás</button>
                             </div>
                         </div>
-
-                        <div class="mt-8">
-                            <button type="button" id="close-token-modal" class="btn-primary w-full py-3">Megértettem, elmentettem</button>
+                        <div class="form-group">
+                            <label for="modal-token-secret">Titkos Widget Token</label>
+                            <div class="inline-input">
+                                <input type="text" id="modal-token-secret" readonly>
+                                <button type="button" data-copy="modal-token-secret" class="btn-secondary">Másolás</button>
+                            </div>
+                        </div>
+                        <div id="modal-token-meta" class="meta-box"></div>
+                        <div class="modal-actions">
+                            <button type="button" id="close-token-modal" class="btn-primary w-full">Rendben</button>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
 
-        <footer class="mt-auto py-8 bg-white border-t border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-                <p>&copy; 2026 GLC-RAG INFO Demo. Minden jog fenntartva.</p>
-                <div class="flex gap-6">
-                    <a href="https://glc-rag.hu/docs" target="_blank" rel="noopener" class="hover:text-primary transition-colors">Swagger API Docs</a>
-                    <a href="#" class="hover:text-primary transition-colors">ÁSZF / Adatvédelem</a>
-                </div>
+        <footer class="app-footer">
+            <p>© 2026 GLC-RAG INFO Demo</p>
+            <div>
+                <a href="https://glc-rag.hu/docs" target="_blank" rel="noopener">Swagger API Docs</a>
+                <a href="#">ÁSZF / Adatvédelem</a>
             </div>
         </footer>
     </div>

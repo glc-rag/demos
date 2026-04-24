@@ -7,11 +7,11 @@ Ez a dokumentum bemutatja, hogyan lehet egy teljes chat folyamatot végrehajtani
 
 ## Lépés 1: Widget token lekérése
 
-A widget token adminisztrációs felületen keresztül kérhető le. A token egy tenanthez és egy felhasználóhoz kötött.
+A widget token **Admin → Integrációk → Public Widget Tokens** menüben, vagy **JWT-vel** a [52-admin-public-widget-tokens.md](52-admin-public-widget-tokens.md) szerinti **POST /admin/public-widget-tokens** hívással hozható létre. A válaszban kapod a titkos tokent (`token`) és a nyilvános `token_id`-t; a chathez a titkos érték kell (`public_widget_token` a body-ban), az embed URL-ben a `token_id`.
 
 ### Token lekérése
 
-A token lekérése a backend admin felületén keresztül történik. A token tartalmazza:
+A token metaadatai listázhatók admin API-n (GET /admin/public-widget-tokens); a **titkos** token csak létrehozáskor és rotációkor látható. A token tartalmazza / metaadatai:
 
 - **token_id**: A token egyedi azonosítója
 - **tenant_id**: A tenant azonosítója

@@ -42,11 +42,18 @@ $BASE_URL = https://<your-api-host>/
 
 **Integration source of truth:** Az integrációs contract minden esetben az OpenAPI specifikáció (openapi.json / Redoc). A quickstart és a flow oldalak magyarázó, oktató célú dokumentumok. Eltérés esetén az OpenAPI az irányadó.
 
+A **quickstart** Markdown forrása a repóban a **`quickstart/`** könyvtárban van (a VitePress build a `docs-quickstart` mappában a `content/` másolatra épít, amit a build előtti script tölt fel). A statikus oldal kimenete: `docs-quickstart/dist/`. Összefoglaló: [41-endpoint-matrix.md](./41-endpoint-matrix.md) (első szekció).
+
 ---
 
 ## Hitelesítési módok
 
 A GLC-RAG API három hitelesítési módot támogat:
+
+### 0. Regisztráció (új tenant admin, JWT előtt)
+
+- **Endpoint**: `POST /auth/register` – nyilvános; email megerősítés után lehet bejelentkezni
+- **Dokumentáció**: [04-auth-register.md](./04-auth-register.md)
 
 ### 1. JWT (internal)
 
@@ -106,6 +113,11 @@ A **POST /chat** és **POST /chat/stream** JWT-tel (internal csatorna) vagy widg
 
 - **POST /widget/chat**: Widget token alapú chat
 - **Dokumentáció**: [21-flow-public-widget.md](./21-flow-public-widget.md)
+
+### Admin: Public Widget Tokens (token létrehozás / embed)
+
+- **POST /admin/public-widget-tokens** és kapcsolódó admin végpontok: JWT + TENANT_ADMIN vagy SYSTEM_ADMIN; a titkos widget token csak létrehozáskor és rotációkor látható
+- **Dokumentáció**: [52-admin-public-widget-tokens.md](./52-admin-public-widget-tokens.md)
 
 ### Info mód (slash /info)
 
@@ -192,8 +204,10 @@ Minden válasz a `ResponseEnvelope` sémát követi:
 - **Dokumentációs konvenciók**: [39-documentation-conventions.md](./39-documentation-conventions.md) – endpoint elnevezések és leírásformátum
 - **Miért bízhatnak a fejlesztők az API-ban**: [50-why-trust-this-api.md](./50-why-trust-this-api.md)
 - **Production readiness**: [51-production-readiness.md](./51-production-readiness.md)
+- **Regisztráció (POST /auth/register)**: [04-auth-register.md](./04-auth-register.md)
 - **Hitelesítés JWT-val**: [01-auth-jwt.md](./01-auth-jwt.md)
 - **Hitelesítés widget tokennel**: [02-auth-widget-token.md](./02-auth-widget-token.md)
+- **Admin: Public Widget Tokens API**: [52-admin-public-widget-tokens.md](./52-admin-public-widget-tokens.md)
 - **Hitelesítés API kulccsal**: [03-auth-api-key.md](./03-auth-api-key.md)
 
 ---

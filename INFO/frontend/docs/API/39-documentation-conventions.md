@@ -2,6 +2,17 @@
 
 Ez a dokumentum a quickstart és az API dokumentumok stíluskonvencióit írja le: endpoint leírásformátum és kanonikus elnevezések. Cél: konzisztens, könnyen kereshető dokumentáció az integrátorok számára.
 
+## Hol a quickstart forrás, hol a build?
+
+| Útvonal | Szerep |
+|---------|--------|
+| **`quickstart/*.md`** | Szerkesztendő Markdown forrás (fájlnév: `NN-téma.md`). |
+| **`docs-quickstart/content/*.md`** | Automatikus másolat build/dev előtt (`sync-quickstart.mjs`); **ne** szerkeszd kézzel. |
+| **`docs-quickstart/dist/`** | VitePress build kimenet (`npm run build` a `docs-quickstart` mappában) – deploy általában ide mutat; **ne** módosítsd kézzel. |
+| **`docs-quickstart/.vitepress/config.js`** | `srcDir: content`, `outDir: dist`. A bal oldali menü a `content` mappában lévő `.md` fájlok **névsor szerinti** listájából épül. |
+
+Az endpointok áttekintő táblája és a forrás/build magyarázat: [41-endpoint-matrix.md](./41-endpoint-matrix.md) (első szekció).
+
 ---
 
 ## Endpoint leírásformátum
@@ -48,3 +59,4 @@ Részletes lista és hitelesítés: [41-endpoint-matrix.md](./41-endpoint-matrix
 - [00-attekinto.md](./00-attekinto.md) – Általános áttekintés
 - [41-endpoint-matrix.md](./41-endpoint-matrix.md) – Endpoint matrix és OpenAPI megfeleltetés
 - [40-best-practices.md](./40-best-practices.md) – Legjobb gyakorlatok
+- [54-frontend-booking-integration.md](./54-frontend-booking-integration.md) – Booking intake: hol részletes az OpenAPI, hol „laza” séma (külső fejlesztőknek)

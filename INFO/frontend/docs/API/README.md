@@ -14,6 +14,8 @@ A GLC-RAG API egy determinisztikus RAG (Retrieval-Augmented Generation) rendszer
 
 **Integration source of truth:** Az integrációs contract minden esetben az OpenAPI specifikáció (openapi.json / Redoc). A quickstart és a flow oldalak magyarázó, oktató célú dokumentumok. Eltérés esetén az OpenAPI az irányadó.
 
+**Forrás vs. build:** A szerkesztendő Markdown fájlok a **`quickstart/`** mappában vannak; a `docs-quickstart` alatti **`npm run build`** / **`npm run dev`** előtt automatikusan bemásolódnak a **`content/`** mappába (VitePress `srcDir`), majd onnan épül a **`dist/`**. Részletek: [docs-quickstart/README.md](../docs-quickstart/README.md), [41-endpoint-matrix.md](./41-endpoint-matrix.md) (első fejezet).
+
 ### Dokumentáció
 
 A következő dokumentumok részletesen leírják az API használatát:
@@ -24,6 +26,7 @@ A következő dokumentumok részletesen leírják az API használatát:
 | [01-auth-jwt.md](./01-auth-jwt.md) | Hitelesítés JWT-val (internal): `Authorization: Bearer <token>` |
 | [02-auth-widget-token.md](./02-auth-widget-token.md) | Hitelesítés widget tokennel (public): `public_widget_token` + `session_id` |
 | [03-auth-api-key.md](./03-auth-api-key.md) | Hitelesítés API kulccsal: X-API-Key header (POST /api/v1/chat) |
+| [04-auth-register.md](./04-auth-register.md) | Regisztráció: POST /auth/register, email megerősítés, login |
 | [10-chat-sync.md](./10-chat-sync.md) | Modul: POST /chat (sync) - szinkron chat hívás |
 | [11-chat-stream.md](./11-chat-stream.md) | Modul: POST /chat/stream - streamelt chat válasz |
 | [12-api-v1-chat.md](./12-api-v1-chat.md) | Modul: POST /api/v1/chat - egyszerűsített chat API |
@@ -40,9 +43,14 @@ A következő dokumentumok részletesen leírják az API használatát:
 | [24-flow-tool-confirm.md](./24-flow-tool-confirm.md) | Tool megerősítés: tool proposal → confirm |
 | [25-flow-shopping.md](./25-flow-shopping.md) | Shopping: termékek ajánlása |
 | [47-info-chat-and-admin.md](./47-info-chat-and-admin.md) | Info: chat /info és admin info betöltés (GET/POST/PUT/DELETE /admin/info, index) |
+| [48-info-web-crawl-from-url.md](./48-info-web-crawl-from-url.md) | Info: weboldal felderítése URL-ről (web crawl → Info) |
+| [49-info-surveys-public-widget.md](./49-info-surveys-public-widget.md) | Info kérdőívek: publikus widget, admin /admin/survey, beküldés POST /widget/survey-submit |
+| [52-admin-public-widget-tokens.md](./52-admin-public-widget-tokens.md) | Admin: Public Widget Tokens – token létrehozás, lista, rotáció, embed snippet |
+| [53-booking-api.md](./53-booking-api.md) | Booking API: foglalástípusok, slotok, intake, foglalások, booking panel token, admin |
+| [54-frontend-booking-integration.md](./54-frontend-booking-integration.md) | Booking külső integráció: intake vs. OpenAPI, `next_question`, javasolt fejlesztési stratégia |
 | [39-documentation-conventions.md](./39-documentation-conventions.md) | Dokumentációs konvenciók: endpoint elnevezések és leírásformátum |
 | [40-best-practices.md](./40-best-practices.md) | Best practices: legjobb gyakorlatok |
-| [41-endpoint-matrix.md](./41-endpoint-matrix.md) | Endpoint matrix: API áttekintés |
+| [41-endpoint-matrix.md](./41-endpoint-matrix.md) | Endpoint matrix: API áttekintés, quickstart forrás/build, OpenAPI megfeleltetés |
 | [50-why-trust-this-api.md](./50-why-trust-this-api.md) | Miért bízhatnak a fejlesztők az API-ban |
 | [51-production-readiness.md](./51-production-readiness.md) | Production readiness: publikus/belső, auth, retry, SSE, rate limit |
 

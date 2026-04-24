@@ -1,6 +1,8 @@
 # Teljes folyamat: Bejelentkezés → token → chat
 
-Ez a dokumentum bemutatja, hogyan lehet egy teljes chat folyamatot végrehajtani a bejelentkezés és chat hívás kombinációjával. A folyamat három lépésből áll:
+Ez a dokumentum bemutatja, hogyan lehet egy teljes chat folyamatot végrehajtani a bejelentkezés és chat hívás kombinációjával. **Új felhasználó** esetén előbb regisztráció és email megerősítés kell: [04-auth-register.md](./04-auth-register.md).
+
+A folyamat három lépésből áll:
 
 1. **Bejelentkezés** - JWT token lekérése
 2. **Token tárolása** - A token biztonságos tárolása

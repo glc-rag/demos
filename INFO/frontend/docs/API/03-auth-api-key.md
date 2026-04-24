@@ -104,9 +104,23 @@ echo $response;
 ?>
 ```
 
-## Hitelesítési hiba
+## Hitelesítési hiba (401)
 
-Ha az API key érvénytelen, hiányzó vagy lejárt, a backend 401-et ad (pl. „X-API-Key header is required” vagy „Invalid API key”).
+Egyes kliensek vagy köztes rétegek **magyar** szöveget is megjeleníthetnek (pl. „Érvénytelen vagy lejárt API kulcs. Ellenőrizze az X-API-Key fejlécet.”) — ez ugyanarra a hibakörre utal, mint az alábbi **angol** `detail` üzenetek; a futó backend tipikusan JSON-ban ezeket adja vissza.
+
+| `detail` (szerver) | Gyakori ok | Mit ellenőrizz |
+|--------------------|------------|----------------|
+| `API key is required` / `X-API-Key header is required` | Nincs kulcs, vagy üres a fejléc. | Minden kéréshez: `X-API-Key: rak_...` (lásd példák fent). |
+| `Invalid API key format` | A kulcs nem `rak_` előtaggal kezdődik. | Az adminból generált kulcsot másold ki egyben; ne vágj le prefixet. |
+| `Invalid API key` | Nincs ilyen kulcs az adatbázisban (elírás, rossz környezet, **rotate** után még a régi kulcs). | Admin → API Keys: friss kulcs az integrációban; jó tenant / jó szerver URL. |
+| `API key is disabled` | A kulcs ki van kapcsolva. | **Enabled** vissza, vagy új kulcs. |
+| `API key has expired` | A kulcs `expires_at` dátuma elmúlt. | Adminban hosszabbítás / új kulcs lejárat nélkül. |
+| `API key does not have '<scope>' scope` | Hiányzik a kért jogosultság (pl. Facebook komment B2B: **`fb_comment`**). | A kulcs **Scopes** listájához add hozzá a szükséges scope-ot. |
+| `X-API-Key or Bearer token required` | Adott végponton nincs sem kulcs, sem JWT (pl. egyes `/admin/fb/...` útvonalak). | Küldj `X-API-Key`-t megfelelő scope-pal, vagy érvényes Bearer JWT-t. |
+
+**Gyakori véletlen:** szóköz vagy rejtett karakter a kulcs végén; kulcs **body**-ban küldése header helyett; **proxy** / API gateway eldobja vagy felülírja az `X-API-Key` fejlécet.
+
+Facebook komment integráció (`fb_comment`) konkrét hibái: [26-flow-facebook-b2b-comments.md](./26-flow-facebook-b2b-comments.md).
 
 ## Tippek
 

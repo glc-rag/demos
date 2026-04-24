@@ -6,6 +6,10 @@ export default defineConfig({
     server: {
         port: 3000,
         proxy: {
+            '/api': {
+                target: 'https://glc-rag.hu',
+                changeOrigin: true,
+            },
             '/auth': {
                 target: 'https://glc-rag.hu',
                 changeOrigin: true,

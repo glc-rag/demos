@@ -2,6 +2,8 @@
 
 Widget token alapú hitelesítés publikus widgetek számára. A kérés body-jában a **`public_widget_token`** (a widget titkos tokene) és a **`session_id`** kötelező mezők.
 
+A titkos token **létrehozása** az admin API-n: [52-admin-public-widget-tokens.md](52-admin-public-widget-tokens.md) (POST /admin/public-widget-tokens), vagy az Admin felületen: **Integrációk → Public Widget Tokens**.
+
 ## Leírás
 
 - **public_widget_token**: A widgethez tartozó titkos token (a backend ebből azonosítja a tenantet). Ne téveszd össze a nyilvános `token_id`-val.
