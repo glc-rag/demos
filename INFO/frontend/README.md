@@ -167,25 +167,9 @@ Ez a README a 2026-04-25-i allapot szerint frissitett, a repositoryban jelenleg 
 
 ---
 
-## 10) GitHub — igy lesz „szem elott”
+## 10) GitHub — hol van a publikus anyag
 
-A GitHub a repository **gyokerében** levo `README.md`-t mutatja a repó főoldalán. Ez a fájl maradjon az `info` gyökerében (ahogy most is van).
+A nyilvános forrás a **`glc-rag/demos`** repóban van, az **`INFO/frontend/`** mappa alatt (ugyanaz a tartalom, mint a helyi `info/app` + `info/docs` + gyökér `README.md` itt).
 
-**Elso feltöltés** (üres GitHub-repó letrehozása után, README nélkül a GitHubon):
-
-```bash
-cd info
-git remote add origin https://github.com/FELHASZNALO/REPO-NEV.git
-git push -u origin main
-```
-
-**Frissítés** később:
-
-```bash
-cd info
-git add -A
-git commit -m "Leiras a valtozasrol"
-git push
-```
-
-Ha még nincs `origin`: `git remote -v` — üres esetén add hozzá az `git remote add origin ...` paranccsal. Bejelentkezés: GitHub Personal Access Token (HTTPS) vagy SSH kulcs.
+- Böngésző: [github.com/glc-rag/demos/tree/main/INFO/frontend](https://github.com/glc-rag/demos/tree/main/INFO/frontend)
+- A helyi `info/` mappa önálló git lehet fejlesztéshez; a **demó repóba** szinkron: másold át `app/` → `INFO/frontend/app/`, `docs/` → `INFO/frontend/docs/`, a gyökér `README.md` → `INFO/frontend/README.md`, majd a `demos` klónban `git commit` és `git push` (SSH: `git@github.com:glc-rag/demos.git`).
