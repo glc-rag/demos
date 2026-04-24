@@ -8,6 +8,16 @@ Ez a README a jelenlegi, tenylegesen hasznalt allapotot foglalja ossze.
 
 ---
 
+## API szolgáltatás — regisztracio (kotelezo lepes)
+
+A **GLC-RAG API** (beleertve az itt dokumentalt endpointokat es a `app/` frontend altal hasznalt hivasokat) **csak regisztralt fiokkal** hasznalhato. Regisztracio es belepes:
+
+**[https://glc-rag.hu/](https://glc-rag.hu/)**
+
+Kulso fejlesztoknek / integracionak: eloszor mindig itt hozz letre fiokot (vagy kerd el az ugyfel adminjatol a hozzaferest), utana kovesd a lenti kornyezeti beallitasokat es a `docs/API/` leirasokat. A publikus forras a GitHubon: [glc-rag/demos](https://github.com/glc-rag/demos) — `INFO/frontend/`.
+
+---
+
 ## 1) Mi van benne?
 
 ### Frontend app (`app/`)
@@ -33,8 +43,7 @@ Ez a README a jelenlegi, tenylegesen hasznalt allapotot foglalja ossze.
 
 ## 2) Gyors inditas
 
-API regisztracio:
-- Regisztralas az oldalon: `https://glc-rag.hu/`
+API regisztracio (lasd feljebb is): **[https://glc-rag.hu/](https://glc-rag.hu/)** — nelkule nincs ervenyes JWT / API hozzaferes a mintakhoz.
 
 Lepj be az app mappaba:
 

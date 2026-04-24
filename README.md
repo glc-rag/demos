@@ -3,6 +3,10 @@
 Ez a repository a GLC-RAG-hoz készült mintaanyagokat tartalmazza, modulonként rendezve.
 A cél, hogy egy helyen legyenek a frontend és backend demo projektek, gyors áttekintéssel.
 
+## API szolgáltatás — regisztráció
+
+A **GLC-RAG API szolgáltatás** (minták futtatása, frontend az éles API-val) **regisztrációt igényel** a **[https://glc-rag.hu/](https://glc-rag.hu/)** oldalon. Először ott hozz létre fiókot (vagy kérj hozzáférést), utána kövesd a modul README-jét (token, környezeti változók). Külső fejlesztőknek ez a kötelező első lépés.
+
 ## Tartalom
 
 | Könyvtár | Leírás |
